@@ -1,6 +1,6 @@
 import React, { useEffect, useState }from 'react'
 import { navbarStyles} from '../assets/dummyStyles'
-import { Watch ,BaggageClaim } from 'lucide-react'; 
+import { Watch ,BaggageClaim ,LogOut  , LogIn} from 'lucide-react'; 
 import {Link, useLocation, useNavigate } from 'react-router-dom'; 
 import { useCart } from '../CartContext';
 
@@ -12,6 +12,8 @@ const navItems = [
 
 const NavBar = () => {
   const{ totalItems} = useCart();
+
+
   const [loggedIn , setLoggedIn] = useState(()=>{
     try{
         return(
@@ -35,7 +37,7 @@ const NavBar = () => {
      setOpen(false); 
     }
     useEffect(() => {
-       setActive(location.pathname||"/");
+    setActive(location.pathname||"/");
   }, [location]) ; 
 
   //to keep user logged-in for all the pages 
@@ -55,6 +57,18 @@ const NavBar = () => {
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
   }, []);
+
+  //define lougout 
+  const handleLogout=()=>{
+    try{
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("authToken");
+    }catch(e){
+        setLoggedIn(false);
+        setOpen(false);
+        navigate("/");
+    }
+  }
 
   return (
     <header className={navbarStyles.header}>
@@ -99,6 +113,7 @@ const NavBar = () => {
                 </div>
                 {/*Right Side*/}
                 <div className={navbarStyles.rightActions}>
+                    {/* Cart Part*/}
                     <Link to="/cart" className={navbarStyles.cartLink}>
                     <BaggageClaim className={navbarStyles.cartIcon} />
                     {totalItems >0  && (
@@ -107,6 +122,23 @@ const NavBar = () => {
                             </span>
                     )}
                     </Link>
+                     {/* Account Part*/}
+                     {loggedIn ? (
+                      <button
+                       onClick={handleLogout}
+                       className={navbarStyles.accountLink} 
+                      >
+                       <LogOut className={navbarStyles.accountIcon}/>
+                          <span className={navbarStyles.accountText}>Logout</span>
+                      </button>
+                     )
+                     : (
+                     <Link to="/login" className= {navbarStyles.accountLink}>
+                     <LogIn className={navbarStyles.accountIcon} />
+                     <span className={navbarStyles.accountText}>Login</span>
+                     </Link>
+                     )
+                    }
 
                 </div>
                 </div>
