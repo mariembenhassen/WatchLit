@@ -1,9 +1,9 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
-import { Router} from 'react-router-dom'
+import { BrowserRouter, Router} from 'react-router-dom'
 
 createRoot(document.getElementById('root')).render(
-  <Router>
+  <BrowserRouter>
     <App />
-    </Router>
+    </BrowserRouter>
 )
