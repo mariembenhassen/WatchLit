@@ -1,21 +1,61 @@
-import React, { useState }from 'react'
+import React, { useEffect, useState }from 'react'
 import { navbarStyles} from '../assets/dummyStyles'
 import { Watch ,BaggageClaim } from 'lucide-react'; 
 import {Link, useLocation, useNavigate } from 'react-router-dom'; 
+import { useCart } from '../CartContext';
 
 const navItems = [ 
     { name: "Home", href: "/" }, 
     { name: "Watches", href: "/watches" },
     { name: "Contact", href: "/contact" },
 ]; 
+
 const NavBar = () => {
-  const [open , setOpen]=useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [active , setActive] = useState(location.pathname||"/");
-  const handleNavClick = (href) =>{ 
-    setActive(href); setOpen(false); 
+  const{ totalItems} = useCart();
+  const [loggedIn , setLoggedIn] = useState(()=>{
+    try{
+        return(
+       localStorage.getItem("isLoggedIn") === "true" ||
+       !!localStorage.getItem("authToken") //!! : it converts any value to a boolean.
+        );
+    } catch{
+       return false ; 
     }
+  })
+  const [open , setOpen]=useState(false);
+
+  const location = useLocation();
+
+  const navigate = useNavigate();
+
+  const [active , setActive] = useState(location.pathname||"/");
+
+  const handleNavClick = (href) =>{ 
+    setActive(href);
+     setOpen(false); 
+    }
+    useEffect(() => {
+       setActive(location.pathname||"/");
+  }, [location]) ; 
+
+  //to keep user logged-in for all the pages 
+     useEffect(() => {
+    const onStorage = (e) => {
+      if (e.key === "isLoggedIn" || e.key === "authToken") {
+        try {
+          const isNowLoggedIn =
+            localStorage.getItem("isLoggedIn") === "true" ||
+            !!localStorage.getItem("authToken");
+          setLoggedIn(isNowLoggedIn);
+        } catch {
+          setLoggedIn(false);
+        }
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   return (
     <header className={navbarStyles.header}>
     <nav className={navbarStyles.nav} role ='navigation'> 
@@ -37,7 +77,8 @@ const NavBar = () => {
      {/* Desktop Navigation*/}
      <div className={navbarStyles.desktopNav}>
          {navItems.map((item)=>{ const isActive = active === item.href;
-             return( <Link key={item.name} 
+             return(
+                 <Link key={item.name} 
                 to={item.href}
               onClick={()=> handleNavClick(item.href)}
                className={`${navbarStyles.navItemBase}
@@ -55,6 +96,18 @@ const NavBar = () => {
                 </span>
                 </Link> );
                 })}
+                </div>
+                {/*Right Side*/}
+                <div className={navbarStyles.rightActions}>
+                    <Link to="/cart" className={navbarStyles.cartLink}>
+                    <BaggageClaim className={navbarStyles.cartIcon} />
+                    {totalItems >0  && (
+                        <span className={navbarStyles.cartBadge}>
+                            {totalItems}
+                            </span>
+                    )}
+                    </Link>
+
                 </div>
                 </div>
                 </nav>

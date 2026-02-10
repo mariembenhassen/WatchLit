@@ -4,7 +4,7 @@ const CartContext  = createContext();
 
 export function CartProvider({children}){
     const [ cart , setCart] = useState( () =>{
-       const stored =  Storage.getItem("cart");
+       const stored = localStorage.getItem("cart");
        return stored? JSON.parse(stored) : []
     }
     )
@@ -90,15 +90,14 @@ export function CartProvider({children}){
     //totals
     const totalItems = cart.reduce((sum ,p) => sum+(p.qty || 0) , 0); // return total watever items in the cart .
     const totalPrice = cart.reduce(
-        (sum, p)=>{
-            sum+((p.qty||0) * parsePrice(p.price)),
-            0
-        }
-    )
+        (sum, p) => sum + ((p.qty || 0) * parsePrice(p.price)),
+         0
+    );
+
 
 
     return (
-     <CartContext.CartProvider 
+     <CartContext.Provider 
      value={{
       cart,
       addItem,
@@ -111,7 +110,7 @@ export function CartProvider({children}){
      }}
      >
         {children}
-     </CartContext.CartProvider>
+     </CartContext.Provider>
     )
 
 }
