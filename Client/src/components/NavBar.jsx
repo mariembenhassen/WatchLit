@@ -1,6 +1,6 @@
 import React, { useEffect, useState }from 'react'
 import { navbarStyles} from '../assets/dummyStyles'
-import { Watch ,BaggageClaim ,LogOut  , LogIn} from 'lucide-react'; 
+import { Watch ,BaggageClaim ,LogOut  , LogIn , Menu, X } from 'lucide-react'; 
 import {Link, useLocation, useNavigate } from 'react-router-dom'; 
 import { useCart } from '../CartContext';
 
@@ -63,7 +63,7 @@ const NavBar = () => {
     try{
         localStorage.removeItem("isLoggedIn");
         localStorage.removeItem("authToken");
-    }catch(e){
+    }catch{
         setLoggedIn(false);
         setOpen(false);
         navigate("/");
@@ -89,12 +89,12 @@ const NavBar = () => {
                 </Link> 
      </div> 
      {/* Desktop Navigation*/}
-     <div className={navbarStyles.desktopNav}>
-         {navItems.map((item)=>{ const isActive = active === item.href;
-             return(
+           <div className={navbarStyles.desktopNav}>
+                 {navItems.map((item)=>{ const isActive = active === item.href;
+                 return(
                  <Link key={item.name} 
                 to={item.href}
-              onClick={()=> handleNavClick(item.href)}
+                onClick={()=> handleNavClick(item.href)}
                className={`${navbarStyles.navItemBase}
                 ${ isActive
                     ? navbarStyles.navItemActive 
@@ -139,10 +139,80 @@ const NavBar = () => {
                      </Link>
                      )
                     }
+                    {/* mobile Toggle*/}
+                    <div className={navbarStyles.mobileMenuButton}>
+                      <button onClick={()=>{
+                        setOpen(!open)
+                      }
+                    }
+                    className={navbarStyles.menuButton}>
+                    {
+                      open ? 
+                      (
+                        <X className={navbarStyles.menuIcon}/>
+                       
+                      )
+                      : (
+                        <Menu  className={navbarStyles.menuIcon}/>
+                      )
+                    }
+                    </button>
+                  
+                  </div>
+                </div>
+             </div>
+                  {/*Mobile Navigation*/}
+                    { open && (
+                      <div className={navbarStyles.mobileMenu}>
+                        <div className={navbarStyles.mobileAccountContainer}>
+                         {
+                          navItems.map((item) =>{
+                            const isActive = active === item.href ;
+                            return (
+                              <Link
+                              key={item.name}
+                              to={item.href}
+                              onClick={()=> handleNavClick(item.href)}
+                              className= { `${navbarStyles.mobileNavItemBase} 
+                              ${ isActive
+                                ? navbarStyles.mobileNavItemActive
+                                :navbarStyles.mobileNavItemInactive}`}
+                              >
+                                <span className={navbarStyles.mobileNavItemText}
+                                >
+                                  {item.name}
+                                </span>
+                              
+                              </Link>
+                            );
+                          })
+                         }
+                         <div className={navbarStyles.mobileAccountContainer}>
+                          {!loggedIn 
+                          ? (
+                            <Link to='/login' 
+                            className={navbarStyles.mobileAccountLink}
+                            onClick={()=>{ handleNavClick('/login')}}>
+                            <LogIn className={navbarStyles.mobileAccountIcon}/>
+                              <span>Login</span>
+                            </Link>
+                          )
+                          :( 
+                            <button 
+                            onClick={()=>{handleLogout()}}
+                            className={navbarStyles.accountLink} 
+                             >
+                              <LogOut className={navbarStyles.accountIcon}/>
+                              <span>Logout</span>
 
-                </div>
-                </div>
-                </nav>
+                            </button>
+                          )
+                        }
+                         </div>
+                        </div>
+                      </div>
+                    )}
+              </nav>
     </header>
   )
 }
