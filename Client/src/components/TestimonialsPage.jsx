@@ -280,7 +280,7 @@ const TestimonialsPage = () => {
 
         <div
           ref={scroller}
-          className={`${testimonialPageStyles.scroller} hide-scrollbar`}
+          className={`${testimonialPageStyles.scroller} `} //hide-scrollbar 
           onMouseDown={onMouseDown}
           onMouseLeave={onMouseLeave}
           onMouseUp={onMouseUp}
@@ -288,6 +288,12 @@ const TestimonialsPage = () => {
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
+          style={
+            {
+              WebkitOverflowScrolling:"touch",
+              touchAction:"pan-y",
+            }
+          }
         >
           {cards.map((c) => (
             <article key={c.id} className={testimonialPageStyles.card}>
