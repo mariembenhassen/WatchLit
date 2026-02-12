@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from "react";
-
 import { testimonialPageStyles } from "../assets/dummyStyles";
 import T1 from "../assets/T1.png";
 import T2 from "../assets/T2.png";
@@ -40,8 +39,9 @@ const cards = [
     img: T4,
   },
 ];
-
+ 
 const TestimonialsPage = () => {
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   const scroller = useRef(null);
   const isDown = useRef(false);
   const startX = useRef(0);
@@ -52,6 +52,7 @@ const TestimonialsPage = () => {
   const lastMoveTime = useRef(0);
   const lastMoveX = useRef(0);
   const velocity = useRef(0);
+  const lerpAlpha = 0.12;
 
   useEffect(() => {
     const el = scroller.current;
@@ -169,14 +170,14 @@ const TestimonialsPage = () => {
     isDown.current = true;
     el.classList.add("cursor-grabbing");
 
-    // use clientX for consistency
-    startX.current = e.clientX - el.offsetLeft;
+    // use pageX for consistency
+    startX.current = e.pageX - el.offsetLeft;
     scrollLeft.current = el.scrollLeft;
 
     // init smoothing state
     targetScroll.current = el.scrollLeft;
     lastMoveTime.current = performance.now();
-    lastMoveX.current = e.clientX;
+    lastMoveX.current = e.pageX;
     velocity.current = 0;
 
     ensureRafRunning();
@@ -200,23 +201,24 @@ const TestimonialsPage = () => {
     if (!isDown.current) return;
     e.preventDefault();
     const el = scroller.current;
-    const x = e.clientX - el.offsetLeft;
-    const walk = (x - startX.current) * 1;
+    const x = e.pageX - el.offsetLeft;
+    const walk = (x - startX.current) * 1.3;
 
     targetScroll.current = scrollLeft.current - walk;
 
     const now = performance.now();
     const dt = Math.max(1, now - lastMoveTime.current); // ms
-    const instantV = (e.clientX - lastMoveX.current) / dt; // px/ms
+    const instantV = (e.pageX - lastMoveX.current) / dt; // px/ms
     // smooth velocity to reduce jitter
     velocity.current = instantV * 0.6 + velocity.current * 0.4;
     lastMoveTime.current = now;
-    lastMoveX.current = e.clientX;
+    lastMoveX.current = e.pageX;
 
     ensureRafRunning();
   };
 
   const onTouchStart = (e) => {
+    if (!isTouchDevice) {
     const el = scroller.current;
     if (!el) return;
     if (rafRef.current) {
@@ -225,85 +227,93 @@ const TestimonialsPage = () => {
     }
 
     isDown.current = true;
-    startX.current = e.touches[0].clientX - el.offsetLeft;
+    startX.current = e.touches[0].pageX - el.offsetLeft;
     scrollLeft.current = el.scrollLeft;
 
     targetScroll.current = el.scrollLeft;
     lastMoveTime.current = performance.now();
-    lastMoveX.current = e.touches[0].clientX;
+    lastMoveX.current = e.touches[0].pageX;
     velocity.current = 0;
 
     ensureRafRunning();
+  }
   };
 
   const onTouchMove = (e) => {
     if (!isDown.current) return;
     const el = scroller.current;
-    const x = e.touches[0].clientX - el.offsetLeft;
+    const x = e.touches[0].pageX - el.offsetLeft;
     const walk = (x - startX.current) * 1;
 
     targetScroll.current = scrollLeft.current - walk;
 
     const now = performance.now();
     const dt = Math.max(1, now - lastMoveTime.current);
-    const instantV = (e.touches[0].clientX - lastMoveX.current) / dt;
+    const instantV = (e.touches[0].pageX - lastMoveX.current) / dt;
     velocity.current = instantV * 0.6 + velocity.current * 0.4;
     lastMoveTime.current = now;
-    lastMoveX.current = e.touches[0].clientX;
+    lastMoveX.current = e.touches[0].pageX;
 
     ensureRafRunning();
   };
+  
 
   const onTouchEnd = () => {
+    if (!isTouchDevice) {
     isDown.current = false;
     scroller.current && scroller.current.classList.remove("cursor-grabbing");
     startMomentum();
+    }
   };
   return (
     <section className={testimonialPageStyles.pageSection}>
-  <div className={testimonialPageStyles.container}>
- <h2 className={testimonialPageStyles.title}
- style={{
-    fontFamily: "'Playfair Display' , serif"
- }}
- >
-    THE WATCH JOURNAL
- </h2>
- { /* FOR SCROLLING  on  x axis*/ }
- <div ref={scroller} className={testimonialPageStyles.scroller}
- onMouseDown={onMouseDown} onMouseLeave={onMouseLeave}
- onMouseUp={onMouseUp} onMouseMove={onMouseMove} onTouchStart={onTouchStart}
- onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}
- style={{
-    WebkitOverflowScrolling: "touch",
-    touchAction:"pan-y",
- }}
- >
-    {cards.map((c)=>(
-     <article 
-     key={c.id}
-     className={testimonialPageStyles.card}
-     >
-        <div className={testimonialPageStyles.imageBlock}>
-            <img 
-            src={c.img}
-            alt={c.title}
-            className={testimonialPageStyles.image}
-            ></img>
+      <div className={testimonialPageStyles.container}>
+        <h2
+          className={testimonialPageStyles.title}
+          style={{
+            fontFamily: "'Playfair Display' , serif",
+          }}
+        >
+          THE WATCH JOURNAL
+        </h2>
+        {/* FOR SCROLLING  on  x axis*/}
+
+        <div
+          ref={scroller}
+          className={`${testimonialPageStyles.scroller} hide-scrollbar`}
+          onMouseDown={onMouseDown}
+          onMouseLeave={onMouseLeave}
+          onMouseUp={onMouseUp}
+          onMouseMove={onMouseMove}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          {cards.map((c) => (
+            <article key={c.id} className={testimonialPageStyles.card}>
+              <div className={testimonialPageStyles.imageBlock}>
+                <img
+                  src={c.img}
+                  alt={c.title}
+                  className={testimonialPageStyles.image}
+                ></img>
+              </div>
+              <div className={testimonialPageStyles.contentBlock}>
+                <div>
+                  <h3 className={testimonialPageStyles.cardTitle}>{c.title}</h3>
+                  <p className={testimonialPageStyles.cardMeta}>{c.meta}</p>
+                  <p className={testimonialPageStyles.cardExcerpt}>
+                    {c.excerpt}
+                  </p>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
+      </div>
 
-     </article>
-
-    ))}
-    </div>
-       </div> 
-</section>
-);
-
-
-
-}
-
-
+    </section>
+  );
+};
 
 export default TestimonialsPage;
