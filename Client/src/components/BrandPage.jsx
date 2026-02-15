@@ -65,38 +65,38 @@ const BrandPage = () => {
         </div>
         {/* watches grid*/}
         <div className={brandPageStyles.grid}>
-  {brandWatches.map((watch) => {
-  const inCart = findInCart(watch.id);
-  return (
-    <div key={watch.id} className={brandPageStyles.card}>
-      <div className={brandPageStyles.imageContainer}>
-        <img
-          src={watch.image}
-          alt={watch.name}
-          className={brandPageStyles.image}
-        />
-      </div>
+          {brandWatches.map((watch) => {
+            const inCart = findInCart(watch.id);
+            return (
+              <div key={watch.id} className={brandPageStyles.card}>
+                <div className={brandPageStyles.imageContainer}>
+                  <img
+                    src={watch.image}
+                    alt={watch.name}
+                    className={brandPageStyles.image}
+                  />
+                </div>
 
-      <div className={brandPageStyles.detailsContainer}>
-        <h2 className={brandPageStyles.watchName}>{watch.name}</h2>
+                <div className={brandPageStyles.detailsContainer}>
+                  <h2 className={brandPageStyles.watchName}>{watch.name}</h2>
 
-        {/* Example: show different UI based on inCart */}
-        {inCart ? (
-          <div className="mt-2 text-sm text-green-600">
-            In cart • Qty: {inCart.qty}
-          </div>
-        ) : (
-          <button
-            onClick={() => addItem(watch)}
-            className="mt-3 px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
-          >
-            Add to Cart
-          </button>
-        )}
-      </div>
-    </div>
-  );
-})}
+                  {/* Example: show different UI based on inCart */}
+                  {inCart ? (
+                    <div className="mt-2 text-sm text-green-600">
+                      In cart • Qty: {inCart.qty}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => addItem(watch)}
+                      className="mt-3 px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
+                    >
+                      Add to Cart
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
