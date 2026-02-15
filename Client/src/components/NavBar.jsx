@@ -63,11 +63,12 @@ const NavBar = () => {
     try{
         localStorage.removeItem("isLoggedIn");
         localStorage.removeItem("authToken");
-    }catch{
-        setLoggedIn(false);
+    }catch (error) {
+    console.error("Logout error:", error);
+  }
+     setLoggedIn(false);
         setOpen(false);
         navigate("/");
-    }
   }
 
   return (
