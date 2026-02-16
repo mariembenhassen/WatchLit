@@ -81,7 +81,7 @@ export function CartProvider({children}){
     }
     const n = parseFloat(s);
     return Number.isFinite(n) ? n : 0;
-    } ; // check the number is right correct for sum or not 
+    } ; // check the number is right correct 
 
     //totals 
     const totalItems = cart.reduce((sum ,p) => sum+(p.qty || 0) , 0); // return total watever items in the cart .
