@@ -2,7 +2,17 @@ import React, { useMemo, useState } from "react";
 import { watchPageStyles } from "../assets/dummyStyles"; // ← your updated styles
 import { WATCHES, FILTERS as RAW_FILTERS } from "../assets/dummywdata";
 import { useCart } from "../CartContext";
-import { Grid, User, Users, Plus, Minus, ShoppingCart, PlusCircle, PlusIcon, ShoppingCartIcon } from "lucide-react";
+import {
+  Grid,
+  User,
+  Users,
+  Plus,
+  Minus,
+  ShoppingCart,
+  PlusCircle,
+  PlusIcon,
+  ShoppingCartIcon,
+} from "lucide-react";
 
 const ICON_MAP = { Grid, User, Users };
 
@@ -20,7 +30,9 @@ const WatchPage = () => {
 
   const filteredWatches = useMemo(() => {
     if (filter === "all") return WATCHES;
-    return WATCHES.filter((w) => w.gender?.toLowerCase() === filter.toLowerCase());
+    return WATCHES.filter(
+      (w) => w.gender?.toLowerCase() === filter.toLowerCase()
+    );
   }, [filter]);
 
   const getQty = (id) => {
@@ -53,7 +65,11 @@ const WatchPage = () => {
                 onClick={() => setFilter(f.key)}
                 className={`
                   ${watchPageStyles.filterButtonBase}
-                  ${isActive ? watchPageStyles.filterButtonActive : watchPageStyles.filterButtonInactive}
+                  ${
+                    isActive
+                      ? watchPageStyles.filterButtonActive
+                      : watchPageStyles.filterButtonInactive
+                  }
                 `}
               >
                 <Icon className={watchPageStyles.filterIcon} />
@@ -85,55 +101,57 @@ const WatchPage = () => {
                     className={watchPageStyles.image}
                     draggable={false}
                   />
-                       {/* For Controls*/}
+                  {/* For Controls*/}
                   <div className={watchPageStyles.cartControlsContainer}>
-                  {qty > 0 ? (
-                    // show minus, qty, plus
-                    <div className={watchPageStyles.cartQuantityControls}>
-                      <button
-                        onClick={() => {
-                          if (qty > 1) decrement(sid);
-                          else removeItem(sid); // remove when qty is 1
-                        }}
-                        className={watchPageStyles.cartButton}
-                      >
-                        <Minus className={watchPageStyles.filterIcon} />
-                      </button>
+                    {qty > 0 ? (
+                      // show minus, qty, plus
+                      <div className={watchPageStyles.cartQuantityControls}>
+                        <button
+                          onClick={() => {
+                            if (qty > 1) decrement(sid);
+                            else removeItem(sid); // remove when qty is 1
+                          }}
+                          className={watchPageStyles.cartButton}
+                        >
+                          <Minus className={watchPageStyles.filterIcon} />
+                        </button>
 
-                      <div className={watchPageStyles.cartQuantity}>{qty}</div>
+                        <div className={watchPageStyles.cartQuantity}>
+                          {qty}
+                        </div>
 
+                        <button
+                          onClick={() => increment(sid)}
+                          className={watchPageStyles.cartButton}
+                        >
+                          <PlusIcon className={watchPageStyles.filterIcon} />
+                        </button>
+                      </div>
+                    ) : (
+                      // show Add button when not in cart
                       <button
-                        onClick={() => increment(sid)}
-                        className={watchPageStyles.cartButton}
+                        onClick={() =>
+                          addItem({
+                            id: sid,
+                            name: w.name,
+                            price: w.price,
+                            img: w.img,
+                          })
+                        }
+                        className={watchPageStyles.addToCartButton}
                       >
-                        <PlusIcon className={watchPageStyles.filterIcon} />
+                        <ShoppingCartIcon
+                          className={watchPageStyles.addToCartIcon}
+                        />
+                        Add
                       </button>
-                    </div>
-                  ) : (
-                    // show Add button when not in cart
-                    <button
-                      onClick={() =>
-                        addItem({
-                          id: sid,
-                          name: w.name,
-                          price: w.price,
-                          img: w.img,
-                        })
-                      }
-                      className={watchPageStyles.addToCartButton}
-                    >
-                      <ShoppingCartIcon className={watchPageStyles.addToCartIcon} />
-                      Add
-                    </button>
-                  )}
-                </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className={watchPageStyles.productInfo}>
                   <h3 className={watchPageStyles.productName}>{w.name}</h3>
-                  <p className={watchPageStyles.productDescription}>
-                    {w.brand || "Premium"}
-                  </p>
+                  <p className={watchPageStyles.productDescription}>{w.desc}</p>
                   <p className={watchPageStyles.productPrice}>
                     ${w.price?.toLocaleString() ?? "—"}
                   </p>
