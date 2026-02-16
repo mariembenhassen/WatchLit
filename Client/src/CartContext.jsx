@@ -64,7 +64,7 @@ export function CartProvider({children}){
     }
 
     //helper function 
-        // helper: robust price parser
+   // helper: robust price parser
   const parsePrice = (price) => {
     if (typeof price === "number" && isFinite(price)) return price;
     if (!price) return 0;
