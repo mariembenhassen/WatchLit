@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { watchPageStyles } from "../assets/dummyStyles"; // ← your updated styles
 import { WATCHES, FILTERS as RAW_FILTERS } from "../assets/dummywdata";
 import { useCart } from "../CartContext";
-import { Grid, User, Users, Plus, Minus, ShoppingCart } from "lucide-react";
+import { Grid, User, Users, Plus, Minus, ShoppingCart, PlusCircle, PlusIcon, ShoppingCartIcon } from "lucide-react";
 
 const ICON_MAP = { Grid, User, Users };
 
@@ -71,60 +71,71 @@ const WatchPage = () => {
             No watches found in this category.
           </p>
         ) : (
-          filteredWatches.map((watch) => {
-            const qty = getQty(watch.id);
+          filteredWatches.map((w) => {
+            const qty = getQty(w.id);
             const inCart = qty > 0;
-            const sid = String(watch.id ?? watch._id ?? watch.sku ?? watch.name);
+            const sid = String(w.id ?? w._id ?? w.sku ?? w.name);
 
             return (
               <div key={sid} className={watchPageStyles.card}>
                 <div className={watchPageStyles.imageContainer}>
                   <img
-                    src={watch.img}
-                    alt={watch.name}
+                    src={w.img}
+                    alt={w.name}
                     className={watchPageStyles.image}
                     draggable={false}
                   />
-
-                  {/* Cart overlay controls */}
+                       {/* For Controls*/}
                   <div className={watchPageStyles.cartControlsContainer}>
-                    {inCart ? (
-                      <div className={watchPageStyles.cartQuantityControls}>
-                        <button
-                          onClick={() => decrement(watch.id)}
-                          className={`${watchPageStyles.quantityButton} hover:bg-gray-100`}
-                        >
-                          <Minus className={watchPageStyles.quantityIcon} />
-                        </button>
-
-                        <span className={watchPageStyles.cartQuantity}>{qty}</span>
-
-                        <button
-                          onClick={() => increment(watch.id)}
-                          className={`${watchPageStyles.quantityButton} hover:bg-gray-100`}
-                        >
-                          <Plus className={watchPageStyles.quantityIcon} />
-                        </button>
-                      </div>
-                    ) : (
+                  {qty > 0 ? (
+                    // show minus, qty, plus
+                    <div className={watchPageStyles.cartQuantityControls}>
                       <button
-                        onClick={() => addItem({ ...watch, qty: 1 })}
-                        className={watchPageStyles.addToCartButton}
+                        onClick={() => {
+                          if (qty > 1) decrement(sid);
+                          else removeItem(sid); // remove when qty is 1
+                        }}
+                        className={watchPageStyles.cartButton}
                       >
-                        <ShoppingCart className={watchPageStyles.addToCartIcon} />
-                        Add
+                        <Minus className={watchPageStyles.filterIcon} />
                       </button>
-                    )}
-                  </div>
+
+                      <div className={watchPageStyles.cartQuantity}>{qty}</div>
+
+                      <button
+                        onClick={() => increment(sid)}
+                        className={watchPageStyles.cartButton}
+                      >
+                        <PlusIcon className={watchPageStyles.filterIcon} />
+                      </button>
+                    </div>
+                  ) : (
+                    // show Add button when not in cart
+                    <button
+                      onClick={() =>
+                        addItem({
+                          id: sid,
+                          name: w.name,
+                          price: w.price,
+                          img: w.img,
+                        })
+                      }
+                      className={watchPageStyles.addToCartButton}
+                    >
+                      <ShoppingCartIcon className={watchPageStyles.addToCartIcon} />
+                      Add
+                    </button>
+                  )}
+                </div>
                 </div>
 
                 <div className={watchPageStyles.productInfo}>
-                  <h3 className={watchPageStyles.productName}>{watch.name}</h3>
+                  <h3 className={watchPageStyles.productName}>{w.name}</h3>
                   <p className={watchPageStyles.productDescription}>
-                    {watch.brand || "Premium"}
+                    {w.brand || "Premium"}
                   </p>
                   <p className={watchPageStyles.productPrice}>
-                    ${watch.price?.toLocaleString() ?? "—"}
+                    ${w.price?.toLocaleString() ?? "—"}
                   </p>
                 </div>
               </div>

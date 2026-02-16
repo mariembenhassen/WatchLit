@@ -22,7 +22,7 @@ export function CartProvider({children}){
             if(existing){
                 return prev.map((p) =>
                 p.id === item.id 
-                ? { ...p , qty: p.qte +1 }
+                ? { ...p , qty: p.qty +1 }
                 : p   // leave all other items unchanged
                 )
             }
@@ -31,27 +31,23 @@ export function CartProvider({children}){
     };
 
     //to increase value of items in cart 
-    const increment=(id)=>{
-        setCart((prev)=>{
-            prev.map((p)=>{
-                p.id === id
-                ?{...p , qty : p.qty +1}
-                :p
-            })
-        }
-
-        )
-    }
+    const increment = (id) => {
+        setCart((prev) =>
+          prev.map((p) =>
+            p.id === id ? { ...p, qty: (p.qty || 0) + 1 } : p
+          )
+        );
+      };
     //to decrease the value if 0 then remove from the cart 
     const decrement= (id)=>{
         setCart(
-            (prev) => {
-            prev.map((p)=>{
+            (prev) => 
+            prev.map((p)=>
                 p.id === id 
                 ?{...p , qty: p.qty-1}
                 :p
-            }).filter((p)=>p.qte>0) //remove the items from cart with qte = 0 
-            }
+            ).filter((p)=>p.qty>0) //remove the items from cart with qty = 0 
+            
         )
     }
 
