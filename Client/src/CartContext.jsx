@@ -83,7 +83,7 @@ export function CartProvider({children}){
     return Number.isFinite(n) ? n : 0;
     } ; // check the number is right correct for sum or not 
 
-    //totals
+    //totals items
     const totalItems = cart.reduce((sum ,p) => sum+(p.qty || 0) , 0); // return total watever items in the cart .
     const totalPrice = cart.reduce(
         (sum, p) => sum + ((p.qty || 0) * parsePrice(p.price)),
