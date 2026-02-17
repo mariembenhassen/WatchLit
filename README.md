@@ -84,13 +84,9 @@ GitHub Repo: [https://github.com/mariembenhassen/chronolit](https://github.com/m
 
 - Payment integration (Stripe / PayPal)
 - Admin dashboard for product management
-- Order history & tracking
-- Reviews & ratings system
 
 ## 📄 License
 
 MIT License – feel free to use, modify, and learn from this project!
 
 Made with ❤️ by Mariem
-
-```
